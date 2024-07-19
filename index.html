@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<!-- saved from url=(0023)http://www.1314bjl.com/ -->
+<html lang="zh-cn">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<script type="text/javascript" src="https://www.w3school.com.cn/jquery/jquery.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+
+    htmlobj=$.ajax({url:"http://localhost/changeLog.txt",async:false});
+    console.log(htmlobj);
+    var lastLogs = JSON.parse(htmlobj.responseText);
+    console.log("lastLogs=",lastLogs);
+    var logStr = "首页上次替换值："
+    $("#lastLogIndex").text(lastLogs[0] + " 替换次数：" + lastLogs[1]);
+    $("#lastLogTui").text(lastLogs[0] + " 替换次数：" + lastLogs[2]);
+
+    $("#changeTxtSource").attr("value",lastLogs[0]);
+    
+    $("#lastLogTime").html("上次修改时间："+ lastLogs[3]);
+
+    $("#b01").click(function(){
+        console.log("lastLogs=",lastLogs[0],$("#changeTxt").val());
+        let htmlobj=$.ajax({url:"http://localhost/editFile.php?oldStr="+ $("#changeTxtSource").val() + "&newStr=" + $("#changeTxt").val(),async:false});
+        var datas = JSON.parse(htmlobj.responseText);
+        if( datas.length > 0 ){
+            $("#resultStatus").html("修改成功");
+            $("#changeCountIndex").text(datas[1]);
+            $("#changeCountTui").text(datas[2]);
+        }else{
+            $("#resultStatus").html("修改失败"+htmlobj.responseText);
+        }
+        $("#resultDiv").css('display','block');
+    });
+    $("#btnLookIndex").click(function(){
+        htmlobj=$.ajax({url:"http://localhost/lookFile.php?type=0",async:false});
+        $("#htmlIndex").html(htmlobj.responseText);
+    });
+    $("#btnLookTui").click(function(){
+        htmlobj=$.ajax({url:"http://localhost/lookFile.php?type=1",async:false});
+        $("#htmlIndex").html(htmlobj.responseText);
+    });
+});
+</script>
+</head>
+<body>
+<div style="font-size: 20px;" id="lastLogTime"></div>
+<div style="font-size: 15px;"><span>首页上次替换值：</span><span id="lastLogIndex">1</span></div>
+<div style="font-size: 15px;"><span>推广上次替换值：</span><span id="lastLogTui">2</span></div>
+<div style="margin: 20px 0px;">
+    <div >
+        <span>本次将要替换的地址： </span><input id="changeTxtSource" type="text" style="width: 300px;" >
+    </div>   
+    <div >
+        <span>输入本次要替换的地址：</span><input id="changeTxt" type="text" style="width: 300px;">
+    </div> 
+</div>
+
+<div style="margin: 10px 0px;"> 
+    <button id="b01" type="button">修改URL</button>
+</div>
+<div id="resultDiv" style="display: none;" >
+    <span id="resultStatus"></span>
+    <div style="font-size: 15px;"><span>首页本次替换数量为：</span><span id="changeCountIndex">http://localhost/changeLog.txt</span></div>
+    <div style="font-size: 15px;"><span>推广本次替换数量为：</span><span id="changeCountTui">http://localhost/changeLog.txt</span></div>
+</div>
+<div style="margin: 10px 0px;flex: 1;"> 
+    <button id="btnLookIndex" type="button">查看首页html</button>
+    <button id="btnLookTui" type="button">查看推广页html</button>
+</div>
+<div style="margin: 10px 0px;"> 
+    <div style="font-size: 15px;" >
+        <samp id="htmlIndex"></samp>
+    </div>
+</div>
+</body>
+</html>
